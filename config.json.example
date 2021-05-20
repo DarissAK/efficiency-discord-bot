@@ -1,0 +1,20 @@
+{
+	"discordKey": "",
+	"serverPort": 3002,
+	"guildID": "",
+	"applicantRoleID": "",
+	"memberRoleID": "",
+	"trialRoleID": "",
+	"everyoneRoleID": "",
+	"secretKey": "",
+	"log_channel": "",
+	"feedback_categoryID": "",
+	"archive_categoryID": "",
+	"app_categoryID": "",
+	"welcome_channelID": "",
+	"officerRoles" : [
+			"1",
+			"2",
+			"3"
+	]
+}
