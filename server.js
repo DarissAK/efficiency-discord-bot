@@ -116,6 +116,39 @@ bot.on("message", message => {
         ).catch(() => {});
       }
 
+      // -- Bot log channel only commands --
+      if (message.channel.id === myConfig.log_channel) {
+        if (checkOfficer(member, message)) {
+          if (message.content === "!cleanup archive") {
+            let archiveChannel = bot.channels.cache.get(myConfig.archive_categoryID);
+            let channels = [];
+            report2("Running archive cleanup.");
+            //report2(archiveChannel.children.keyArray());
+            archiveChannel.children.forEach(channel => {
+              channels.push(channel.name);
+              channel.delete('cleaning up archive category')
+                .catch(report2);
+              //report2('Fetching...');
+            })
+            report2(`Deleted ${channels}`);
+          }
+
+          if (message.content === "!cleanup feedback") {
+            let feedbackChannel = bot.channels.cache.get(myConfig.feedback_categoryID);
+            let channels = [];
+            report2("Running feedback cleanup.");
+            //report2(archiveChannel.children.keyArray());
+            feedbackChannel.children.forEach(channel => {
+              channels.push(channel.name);
+              channel.delete('cleaning up feedback category')
+                .catch(report2);
+              //report2('Fetching...');
+            })
+            report2(`Deleted ${channels}`);
+          }
+        }
+      }
+
       // --- App Commands ---
       if (message.channel.parent.name === "applications") {
         if (message.content === "!debug message") {
@@ -131,6 +164,18 @@ bot.on("message", message => {
             "test1 \n" +
             "test2"
           )
+        }
+
+        if (message.content === "!debug removetrialrole") {
+          message.channel
+            .createOverwrite(myConfig.trialRoleID, {
+              SEND_MESSAGES: false,
+              READ_MESSAGES: false,
+              READ_MESSAGE_HISTORY: false,
+              VIEW_CHANNEL: false
+            }).catch((e) => {
+              report2(e.stack)
+            });
         }
 
         if (message.content === "!debug checkrole") {
@@ -214,9 +259,11 @@ bot.on("message", message => {
                   report2(e.stack)
                 });
 
-              report(`\`\`\`Moving ${message.channel.name} to archive.\`\`\``).catch((e) => {
+              try {
+                report(`\`\`\`Moving ${message.channel.name} to archive.\`\`\``)
+              } catch (e) {
                 report2(e.stack)
-              });
+              }
 
               message.channel.send(
                 `Moving channel to archive.`
@@ -309,16 +356,6 @@ bot.on("message", message => {
                           // remove members permissions
                           message.channel
                             .createOverwrite(myConfig.memberRoleID, {
-                              SEND_MESSAGES: false,
-                              READ_MESSAGES: false,
-                              READ_MESSAGE_HISTORY: false
-                            }).catch((e) => {
-                              report2(e.stack)
-                            });
-
-                          // remove trial permissions
-                          message.channel
-                            .createOverwrite(myConfig.trialRoleID, {
                               SEND_MESSAGES: false,
                               READ_MESSAGES: false,
                               READ_MESSAGE_HISTORY: false
@@ -684,15 +721,6 @@ const createApplicantUserChannel = (member, i) => {
                   });
                 channel
                   .createOverwrite(myConfig.memberRoleID, {
-                    SEND_MESSAGES: true,
-                    READ_MESSAGES: true,
-                    EMBED_LINKS: true,
-                    READ_MESSAGE_HISTORY: true,
-                    ATTACH_FILES: true,
-                    VIEW_CHANNEL: true
-                  });
-                channel
-                  .createOverwrite(myConfig.trialRoleID, {
                     SEND_MESSAGES: true,
                     READ_MESSAGES: true,
                     EMBED_LINKS: true,
